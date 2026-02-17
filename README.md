@@ -1,4 +1,147 @@
 # Drug-Screening-For-AD
-A retrospective MCI cohort was assembled following the criteria illustrated. An initial case-control screening was conducted to identify potential drug-disease associations. MCI patients were defined as cases who subsequently developed AD. Controls were individuals without an AD diagnosis at any time. Subjects with at least one documentation of an AD code and no exposure to an approved AD drug are termed “Status undetermined” and are removed from the analysis. 
-Exposure algorithms incorporated the dispense and request data structure in TRUVETA. Subjects were classified as exposed if they had ≥1 dispense with ≥15 total days’ supply or ≥2 dispenses, or ≥2 requests; unexposed if no dispense or request records. Incomplete or inconsistent fill records were categorized as undetermined. Parallel analyses were done on both the new-user and the prevalent-user designs. Subjects with first drug initiation after MCI are classified as new users. The index date was defined as the first recorded MCI diagnosis.
-Covariates assessed within one year before the index date included age, sex, race, depression, type 2 diabetes mellitus, hypertension, stroke, and ischemic heart disease. Multivariate logistic regression was performed for each drug, adjusting for these covariates. Odds ratios (OR) and 95% confidence intervals were estimated separately for new-user and prevalent-user designs. 
+
+## Overview
+
+This repository contains a reproducible analytic pipeline for screening drug associations with progression from Mild Cognitive Impairment (MCI) to Alzheimer’s Disease (AD) using real-world electronic health record (EHR) data from Truveta.
+
+The objective of this project is to build a scalable framework that:
+
+- Constructs an incident MCI cohort
+- Defines drug-specific exposure groups
+- Implements new-user and prevalent-user study designs
+- Performs multivariable logistic regression
+- Enables automated screening across multiple drug candidates
+
+This pipeline is designed for hypothesis generation and signal prioritization prior to causal validation (e.g., target trial emulation).
+
+---
+
+## Repository Structure
+
+### 📂 `ADSL.ipynb`
+**Cohort construction and study design**
+
+Responsible for:
+
+- Applying inclusion and exclusion criteria
+- Defining incident MCI cohort
+- Defining case (MCI → AD) and control groups
+- Establishing index date (first recorded MCI diagnosis)
+- Removing patients with prior AD or related dementia
+- Implementing healthcare history requirements
+- Classifying new-user vs prevalent-user designs
+
+**Output:** Final analytic cohort dataset.
+
+---
+
+### 📂 `Condition_encounter_r.ipynb`
+**Comorbidity and covariate construction**
+
+- Extracts diagnosis and encounter data
+- Generates comorbidity indicators within 1 year prior to index date:
+  - Hypertension
+  - Type 2 Diabetes Mellitus
+  - Depression
+  - Stroke
+  - Ischemic Heart Disease
+- Produces covariate-ready dataset for regression models
+
+---
+
+### 📂 `medication_exposure.ipynb`
+**Drug exposure algorithm**
+
+Implements standardized exposure classification using dispense and request data.
+
+Subjects are classified as:
+
+- **Exposed**:
+  - ≥1 dispense with ≥15 total days' supply OR
+  - ≥2 dispenses OR
+  - ≥2 request records
+
+- **Unexposed**:
+  - No dispense or request records
+
+- **Undetermined**:
+  - Incomplete or inconsistent fill records
+
+Creates drug-specific exposure tables for downstream analysis.
+
+---
+
+### 📂 (Planned) `analysis_pipeline.ipynb`
+**Automated drug screening framework**
+
+This module will:
+
+- Accept a drug name as input
+- Merge cohort + comorbidities + exposure data
+- Apply both new-user and prevalent-user study designs
+- Fit multivariable logistic regression models
+- Estimate Odds Ratios (OR) and 95% Confidence Intervals
+- Generate results for:
+  - Full cohort
+  - Discovery set
+  - Validation set
+
+This enables scalable and automated screening across multiple drugs with minimal manual intervention.
+
+---
+
+## Study Design Summary
+
+- **Population:** Adults ≥65 years with incident MCI
+- **Outcome:** Incident AD diagnosis
+- **Exposure:** Drug-specific algorithm based on dispense/request records
+- **Designs:** New-user and prevalent-user
+- **Covariates:** Age, sex, race, and comorbidities assessed within 1 year pre-index
+- **Analysis:** Multivariable logistic regression
+- **Validation:** Temporal split into discovery and validation cohorts
+
+---
+
+## Analytical Framework
+
+For each drug:
+
+1. Define exposure status
+2. Merge exposure with cohort and covariates
+3. Run adjusted logistic regression
+4. Estimate OR and 95% CI
+5. Compare results across:
+   - New-user vs prevalent-user designs
+   - Discovery vs validation sets
+
+---
+
+## Purpose
+
+This repository supports:
+
+- Large-scale screening of candidate repurposed drugs
+- Standardized and reproducible exposure definitions
+- Efficient prioritization of drug signals
+- Comparative evaluation of study design assumptions
+
+The results generated by this pipeline represent screening-level associations and should not be interpreted as causal estimates.
+
+---
+
+## Future Directions
+
+- Target trial emulation
+- Propensity score methods
+- Balance diagnostics
+- Sensitivity analyses using alternative exposure definitions
+- External validation in independent datasets
+
+---
+
+## Notes
+
+This pipeline is optimized for large EHR datasets and modular expansion.  
+Additional drug candidates can be evaluated by supplying the drug name to the analysis module.
+
+---
